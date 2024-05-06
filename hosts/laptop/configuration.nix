@@ -102,7 +102,6 @@
 
   programs.neovim.enable = true;
   programs.git.enable = true; #TODO add config
-  # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 	
   environment.systemPackages = (with pkgs; [
@@ -111,5 +110,21 @@
     htop
     libgcc
   ]);
+
+
+  #This should be structured better, but here it stays for now, with hardcoded paths
+  system.activationScripts.bashrc = {
+    text = ''
+      # Ensure the user's home directory exists and create .bashrc
+      mkdir -p /home/svein
+      cat > /home/svein/.bashrc <<EOF
+      #!/bin/sh
+      alias vim='nvim'
+      EOF
+      chown svein /home/svein/.bashrc
+    '';
+    deps = [];
+  };
+
   system.stateVersion = "23.11";
 }
