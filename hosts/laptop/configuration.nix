@@ -28,6 +28,10 @@
     gnome-tour
   ]) ++ (with pkgs.gnome; [
     gnome-music
+    gnome-weather
+    gnome-calendar
+    gnome-clocks
+    gnome-contacts
     epiphany
     geary
     tali
@@ -39,6 +43,9 @@
   services.xserver = {
     layout = "no";
     xkbVariant = "";
+    excludePackages = [
+     pkgs.xterm
+    ];
   };
   console.keyMap = "no";
 
