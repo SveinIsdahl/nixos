@@ -109,6 +109,10 @@
     gnomeExtensions.pop-shell #TODO: config this
     htop
     libgcc
+    pciutils
+    usbutils
+    libsmbios
+    zip
   ]);
 
 
@@ -120,6 +124,7 @@
       cat > /home/svein/.bashrc <<EOF
       #!/bin/sh
       alias vim='nvim'
+      alias untargz='tar -xvzf'
       EOF
       chown svein /home/svein/.bashrc
     '';
