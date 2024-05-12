@@ -15,7 +15,7 @@
   nix.settings.experimental-features = [ "nix-command" ];
 
   networking.networkmanager.enable = true;
-
+  virtualisation.docker.enable = true;
   # Set your time zone.
   time.timeZone = "Europe/Oslo";
   # Locale
@@ -39,6 +39,7 @@
     hitori
     atomix
   ]);
+  #programs.dconf.enable = true; TODO: Enable
 
   services.xserver = {
     layout = "no";
@@ -67,7 +68,7 @@
   users.users.svein = {
     isNormalUser = true;
     description = "svein";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel" "docker"];
     packages = with pkgs; [
     #  thunderbird
     ];
@@ -130,6 +131,18 @@
     '';
     deps = [];
   };
+
+  # Systemd service to pull the latest Ubuntu image
+  systemd.services.docker-pull-ubuntu = {
+    wantedBy = [ "multi-user.target" ];
+    after = [ "docker.service" ];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.docker}/bin/docker pull ubuntu:latest";
+      RemainAfterExit = true;
+    };
+  };
+
 
   system.stateVersion = "23.11";
 }
