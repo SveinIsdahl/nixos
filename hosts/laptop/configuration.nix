@@ -68,7 +68,7 @@
   users.users.svein = {
     isNormalUser = true;
     description = "svein";
-    extraGroups = [ "networkmanager" "wheel" "docker"];
+    extraGroups = [ "networkmanager" "wheel" "docker" ];
     packages = with pkgs; [
     #  thunderbird
     ];
@@ -110,26 +110,43 @@
     gnomeExtensions.pop-shell #TODO: config this
     htop
     libgcc
+    gcc13
     pciutils
     usbutils
     libsmbios
     zip
+    spotify
+    nmap
+    pkgs.man-pages 
+    pkgs.man-pages-posix
   ]);
 
 
   #This should be structured better, but here it stays for now, with hardcoded paths
   system.activationScripts.bashrc = {
     text = ''
-      # Ensure the user's home directory exists and create .bashrc
       mkdir -p /home/svein
       cat > /home/svein/.bashrc <<EOF
       #!/bin/sh
       alias vim='nvim'
       alias untargz='tar -xvzf'
+
+      export HISTFILESIZE=100000
+      export HISTSIZE=100000
       EOF
       chown svein /home/svein/.bashrc
     '';
     deps = [];
+  };
+  system.activationScripts.neovimConfig = {
+    text = ''
+      mkdir -p /home/svein/.config/nvim
+      cat > /home/svein/.config/nvim/init.vim <<EOF
+      set number
+      set relativenumber
+      EOF
+      chown svein /home/svein/.config/nvim/init.vim
+    '';
   };
 
   # Systemd service to pull the latest Ubuntu image
