@@ -101,7 +101,6 @@
     };
   };
 
-  programs.neovim.enable = true;
   programs.git.enable = true; #TODO add config
   nixpkgs.config.allowUnfree = true;
 	
@@ -138,15 +137,22 @@
     '';
     deps = [];
   };
-  system.activationScripts.neovimConfig = {
-    text = ''
-      mkdir -p /home/svein/.config/nvim
-      cat > /home/svein/.config/nvim/init.vim <<EOF
-      set number
-      set relativenumber
-      EOF
-      chown svein /home/svein/.config/nvim/init.vim
-    '';
+
+  programs.neovim = {
+    enable = true;
+    defaultEditor = true;
+    configure = {
+    customRC = ''
+        set number
+        set relativenumber
+      '';
+      packages.myVimPackage = with pkgs.vimPlugins; {
+        start = [ 
+	  #nvim-treesitter 
+          #nvim-treesitter-parsers.c
+	];
+      };
+    };
   };
 
   # Systemd service to pull the latest Ubuntu image
