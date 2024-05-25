@@ -148,8 +148,11 @@
       '';
       packages.myVimPackage = with pkgs.vimPlugins; {
         start = [ 
-	  #nvim-treesitter 
+	  nvim-treesitter 
+          nvim-treesitter.withAllGrammars
           #nvim-treesitter-parsers.c
+	  #(nvim-treesitter.withPlugins (plugins: pkgs.tree-sitter.allGrammars))
+
 	];
       };
     };
