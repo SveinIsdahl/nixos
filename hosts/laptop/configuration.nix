@@ -21,6 +21,23 @@
   # Locale
   i18n.defaultLocale = "en_US.UTF-8";
 
+  boot.extraModprobeConfig = ''
+  blacklist nouveau
+  options nouveau modeset=0
+	'';
+  
+  services.udev.extraRules = ''
+    # Remove NVIDIA USB xHCI Host Controller devices, if present
+    ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x0c0330", ATTR{power/control}="auto", ATTR{remove}="1"
+    # Remove NVIDIA USB Type-C UCSI devices, if present
+    ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x0c8000", ATTR{power/control}="auto", ATTR{remove}="1"
+    # Remove NVIDIA Audio devices, if present
+    ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x040300", ATTR{power/control}="auto", ATTR{remove}="1"
+    # Remove NVIDIA VGA/3D controller devices
+    ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x03[0-9]*", ATTR{power/control}="auto", ATTR{remove}="1"
+  '';
+  boot.blacklistedKernelModules = [ "nouveau" "nvidia" "nvidia_drm" "nvidia_modeset" ];
+
   services.xserver.enable = true;
   services.xserver.displayManager.gdm.enable = true;
   services.xserver.desktopManager.gnome.enable = true;
@@ -118,6 +135,7 @@
     nmap
     pkgs.man-pages 
     pkgs.man-pages-posix
+	clang-tools #Double check if needed
   ]);
 
 
@@ -143,16 +161,13 @@
     defaultEditor = true;
     configure = {
     customRC = ''
-        set number
-        set relativenumber
+        set number relativenumber
+		set autoindent noexpandtab tabstop=4 shiftwidth=4
       '';
       packages.myVimPackage = with pkgs.vimPlugins; {
         start = [ 
-	  nvim-treesitter 
+	  	  nvim-treesitter 
           nvim-treesitter.withAllGrammars
-          #nvim-treesitter-parsers.c
-	  #(nvim-treesitter.withPlugins (plugins: pkgs.tree-sitter.allGrammars))
-
 	];
       };
     };
@@ -169,6 +184,5 @@
     };
   };
 
-
-  system.stateVersion = "23.11";
+  system.stateVersion = "24.05";
 }
